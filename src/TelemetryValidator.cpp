@@ -1,6 +1,7 @@
+#include <cmath>
 #include "../res/TelemetryValidator.h"
 
-bool TelemetryValidator::ValidateTelemetry(TelemetryMessage tele)
+bool TelemetryValidator::ValidateTelemetry(const TelemetryMessage& tele)
 {
 	bool validID = ValidateDeviceId(tele.deviceID);
 	bool validTemperature = ValidateTemperature(tele.temperature);
@@ -24,7 +25,13 @@ bool TelemetryValidator::ValidateDeviceId(const std::string& deviceID)
 
 bool TelemetryValidator::ValidateTemperature(const double temperature)
 {
-	if (temperature <= invalidLowTemperature)
+	if (!std::isfinite(temperature))
+	{
+		//TODO: log
+		return false;
+	}
+
+	if (temperature < invalidLowTemperature)
 	{
 		//TODO: log
 		return false;
@@ -41,7 +48,13 @@ bool TelemetryValidator::ValidateTemperature(const double temperature)
 
 bool TelemetryValidator::ValidatePressure(const double pressure)
 {
-	if (pressure <= invalidLowPressure)
+	if (!std::isfinite(pressure))
+	{
+		//TODO: log
+		return false;
+	}
+
+	if (pressure < invalidLowPressure)
 	{
 		//TODO: log
 		return false;
@@ -58,7 +71,13 @@ bool TelemetryValidator::ValidatePressure(const double pressure)
 
 bool TelemetryValidator::ValidateRpm(const double rpm)
 {
-	if (rpm <= invalidLowRpm)
+	if (!std::isfinite(rpm))
+	{
+		//TODO: log
+		return false;
+	}
+	
+	if (rpm < invalidLowRpm)
 	{
 		//TODO: log
 		return false;
@@ -75,7 +94,13 @@ bool TelemetryValidator::ValidateRpm(const double rpm)
 
 bool TelemetryValidator::ValidateFuel(const double fuel)
 {
-	if (fuel <= invalidLowFuel)
+	if (!std::isfinite(fuel))
+	{
+		//TODO: log
+		return false;
+	}
+
+	if (fuel < invalidLowFuel)
 	{
 		//TODO: log
 		return false;

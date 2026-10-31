@@ -46,6 +46,7 @@ int main()
 		
 		//test invalid
 		telemetryMessages.at(1).fuel = 522;
+		telemetryMessages.at(2).temperature = NAN;
 
 		//DisplayTelemetryMessagesToConsole(telemetryMessages);
 

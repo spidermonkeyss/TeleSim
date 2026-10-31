@@ -1,7 +1,7 @@
 #include <cmath>
 #include "../res/TelemetryValidator.h"
 
-bool TelemetryValidator::ValidateTelemetry(const TelemetryMessage& tele)
+bool TelemetryValidator::ValidateTelemetry(const TelemetryData& tele)
 {
 	bool validID = ValidateDeviceId(tele.deviceID);
 	bool validTemperature = ValidateTemperature(tele.temperature);

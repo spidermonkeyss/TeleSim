@@ -1,10 +1,10 @@
 #pragma once
-#include "../res/TelemetryMessage.h"
+#include "../res/TelemetryData.h"
 
 class TelemetryValidator
 {
 public:
-	bool ValidateTelemetry(const TelemetryMessage& tele);
+	bool ValidateTelemetry(const TelemetryData& tele);
 
 private:
 	bool ValidateDeviceId(const std::string& deviceID);

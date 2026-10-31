@@ -15,7 +15,7 @@ constexpr double hRpm = 2700;
 constexpr double lFuel = 25;
 constexpr double hFuel = 50;
 
-DeviceStatus DetermineStatus(const TelemetryMessage& tele)
+std::string DetermineStatus(const TelemetryMessage& tele)
 {
 	//Any reading that is on the 10% edge of the ranges will be a fail for the device
 	//Any reading that is on the 30% edge of the ranges will be a warning for the device
@@ -26,30 +26,30 @@ DeviceStatus DetermineStatus(const TelemetryMessage& tele)
 	double fuelPercentage = (tele.fuel - lFuel) / (hFuel - lFuel) * 100;
 	
 	if (tempPercentage <= 10 || tempPercentage >= 90)
-		return DeviceStatus::FAIL;
+		return "FAIL";
 
 	if (pressurePercentage <= 10 || pressurePercentage >= 90)
-		return DeviceStatus::FAIL;
+		return "FAIL";
 
 	if (rpmPercentage <= 10 || rpmPercentage >= 90)
-		return DeviceStatus::FAIL;
+		return "FAIL";
 
 	if (fuelPercentage <= 10 || fuelPercentage >= 90)
-		return DeviceStatus::FAIL;
+		return "FAIL";
 
 	if (tempPercentage <= 30 || tempPercentage >= 70)
-		return DeviceStatus::WARNING;
+		return "WARNING";
 
 	if (pressurePercentage <= 30 || pressurePercentage >= 70)
-		return DeviceStatus::WARNING;
+		return "WARNING";
 
 	if (rpmPercentage <= 30 || rpmPercentage >= 70)
-		return DeviceStatus::WARNING;
+		return "WARNING";
 
 	if (fuelPercentage <= 30 || fuelPercentage >= 70)
-		return DeviceStatus::WARNING;
+		return "WARNING";
 
-	return DeviceStatus::NORMAL;
+	return "NORMAL";
 }
 
 std::vector<TelemetryMessage> GenerateReadings(int numReadings)
@@ -79,7 +79,7 @@ std::vector<TelemetryMessage> GenerateReadings(int numReadings)
 		tele.pressure = pressureRange(rng);
 		tele.rpm = rpmRange(rng);
 		tele.fuel = fuelRange(rng);
-		tele.deviceStatus = DetermineStatus(tele);
+		tele.messageDeviceStatus = DetermineStatus(tele);
 		teleMessageVector.push_back(tele);
 	}
 	

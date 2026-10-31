@@ -2,7 +2,6 @@
 
 #include <string>
 
-enum DeviceStatus { NORMAL, WARNING, FAIL };
 
 struct TelemetryMessage
 {
@@ -11,5 +10,5 @@ struct TelemetryMessage
 	double pressure;
 	double rpm;
 	double fuel;
-	DeviceStatus deviceStatus;
+	std::string messageDeviceStatus;
 };

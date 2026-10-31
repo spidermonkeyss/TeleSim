@@ -5,16 +5,16 @@
 #include <string>
 
 //Ranges for each measurement to be randomized
-double lTemp = 195;
-double hTemp = 220;
-double lPressure = 30;
-double hPressure = 60;
-double lRpm = 2200;
-double hRpm = 2700;
-double lFuel = 25;
-double hFuel = 50;
+constexpr double lTemp = 195;
+constexpr double hTemp = 220;
+constexpr double lPressure = 30;
+constexpr double hPressure = 60;
+constexpr double lRpm = 2200;
+constexpr double hRpm = 2700;
+constexpr double lFuel = 25;
+constexpr double hFuel = 50;
 
-DeviceStatus DetermineStatus(TelemetryMessage tele)
+DeviceStatus DetermineStatus(const TelemetryMessage& tele)
 {
 	//Any reading that is on the 10% edge of the ranges will be a fail for the device
 	//Any reading that is on the 30% edge of the ranges will be a warning for the device

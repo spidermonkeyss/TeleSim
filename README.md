@@ -8,6 +8,7 @@ A C++ telemetry simulator that generates randomized engine sensor readings for m
 - Generates randomized temperature, pressure, RPM, and fuel readings.
 - Assigns device status classifications.
 - Updates sensor readings every second.
+- Automatic device status classification based on sensor thresholds.
 
 ## Technologies
 
@@ -17,7 +18,6 @@ A C++ telemetry simulator that generates randomized engine sensor readings for m
 
 ## Planned Features
 
-- Automatic device status classification based on sensor thresholds.
 - Additional simulated sensors and devices.
 - Telemetry data validation and processing.
 - Multithreaded data generation and processing.

@@ -5,6 +5,7 @@
 #include <string>
 
 //Ranges for each measurement to be randomized
+//These do not match the ranges for a valid reading. Those are in the TelemetryValidator
 constexpr double lTemp = 195;
 constexpr double hTemp = 220;
 constexpr double lPressure = 30;

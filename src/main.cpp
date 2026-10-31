@@ -9,7 +9,7 @@ int main()
 	bool loop = true;
 	while (loop)
 	{
-		std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(4);
+		std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(10);
 
 		for (const auto& message : telemetryMessages)
 		{
@@ -20,13 +20,13 @@ int main()
 			std::cout << "\nfuel: " << message.fuel;
 			switch (message.deviceStatus)
 			{
-			case 0:
-				std::cout << "\nStatus: NORAML\n\n";
+			case DeviceStatus::NORMAL:
+				std::cout << "\nStatus: NORMAL\n\n";
 				break;
-			case 1:
+			case DeviceStatus::WARNING:
 				std::cout << "\nStatus: WARNING\n\n";
 				break;
-			case 2:
+			case DeviceStatus::FAIL:
 				std::cout << "\nStatus: FAIL\n\n";
 				break;
 			default:

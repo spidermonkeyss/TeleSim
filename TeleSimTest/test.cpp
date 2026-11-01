@@ -27,7 +27,7 @@ TEST(TelemetryProcessorTests, AveragePressureTest)
     EXPECT_DOUBLE_EQ(telemetryProcessor.AveragePressure(telemetryData), 60.0);
 
     telemetryData.clear();
-    EXPECT_DOUBLE_EQ(telemetryProcessor.AverageTemperature(telemetryData), 0.0);
+    EXPECT_DOUBLE_EQ(telemetryProcessor.AveragePressure(telemetryData), 0.0);
 }
 
 TEST(TelemetryProcessorTests, AverageRpmTest)
@@ -41,7 +41,7 @@ TEST(TelemetryProcessorTests, AverageRpmTest)
     EXPECT_DOUBLE_EQ(telemetryProcessor.AverageRpm(telemetryData), 2000.0);
 
     telemetryData.clear();
-    EXPECT_DOUBLE_EQ(telemetryProcessor.AverageTemperature(telemetryData), 0.0);
+    EXPECT_DOUBLE_EQ(telemetryProcessor.AverageRpm(telemetryData), 0.0);
 }
 
 TEST(TelemetryProcessorTests, AverageFuelTest)
@@ -55,7 +55,7 @@ TEST(TelemetryProcessorTests, AverageFuelTest)
     EXPECT_DOUBLE_EQ(telemetryProcessor.AverageFuel(telemetryData), 20.0);
 
     telemetryData.clear();
-    EXPECT_DOUBLE_EQ(telemetryProcessor.AverageTemperature(telemetryData), 0.0);
+    EXPECT_DOUBLE_EQ(telemetryProcessor.AverageFuel(telemetryData), 0.0);
 }
 
 TEST(TelemetryProcessorTests, MinimumTemperatureTest)

@@ -125,6 +125,9 @@ TelemetryData TelemetryProcessor::MaxTemperature(const std::vector<TelemetryData
 
 TelemetryData TelemetryProcessor::MaxPressure(const std::vector<TelemetryData>& telemetryData)
 {
+	if (telemetryData.empty())
+		return TelemetryData();
+
 	int maxIndex = 0;
 	for (int i = 1; i < telemetryData.size(); i++)
 	{

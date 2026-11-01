@@ -92,9 +92,11 @@ int main()
 			
 			if(message.messageDeviceStatus == "NORMAL")
 				data.deviceStatus = NORMAL;
-			if (message.messageDeviceStatus == "WARNING")
+			else if (message.messageDeviceStatus == "WARNING")
 				data.deviceStatus = WARNING;
-			if (message.messageDeviceStatus == "FAIL")
+			else if (message.messageDeviceStatus == "FAIL")
+				data.deviceStatus = FAIL;
+			else
 				data.deviceStatus = FAIL;
 
 			telemetryData.push_back(data);
@@ -129,10 +131,15 @@ int main()
 		std::cout << "Average RPM: " << averageRpm << "\n";
 		std::cout << "Average Fuel: " << averageFuel << "\n";
 
+		TelemetryData minTempDevice = telemetryProcessor.MinimumTemperature(validTelemetry);
+		std::cout << "Minimun Temperature: " << minTempDevice.deviceID << " " << minTempDevice.temperature << "\n";
+		TelemetryData maxTempDevice = telemetryProcessor.MaxTemperature(validTelemetry);
+		std::cout << "Max Temperature: " << maxTempDevice.deviceID << " " << maxTempDevice.temperature << "\n";
+
 		//sleep for 1 second
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 
-		//loop = false;
+		loop = false;
 	}
 
 	return 0;

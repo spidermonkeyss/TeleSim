@@ -69,6 +69,9 @@ TEST(TelemetryProcessorTests, MinimumTemperatureTest)
 
     EXPECT_EQ(telemetryProcessor.MinimumTemperature(telemetryData).deviceID, "ENGINE_002");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MinimumTemperature(telemetryData).temperature, 50.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MinimumTemperature(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MinimumPressureTest)
@@ -82,6 +85,9 @@ TEST(TelemetryProcessorTests, MinimumPressureTest)
 
     EXPECT_EQ(telemetryProcessor.MinimumPressure(telemetryData).deviceID, "ENGINE_003");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MinimumPressure(telemetryData).pressure, 20.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MinimumPressure(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MinimumRpmTest)
@@ -95,6 +101,9 @@ TEST(TelemetryProcessorTests, MinimumRpmTest)
 
     EXPECT_EQ(telemetryProcessor.MinimumRpm(telemetryData).deviceID, "ENGINE_002");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MinimumRpm(telemetryData).rpm, 500.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MinimumRpm(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MinimumFuelTest)
@@ -108,6 +117,9 @@ TEST(TelemetryProcessorTests, MinimumFuelTest)
 
     EXPECT_EQ(telemetryProcessor.MinimumFuel(telemetryData).deviceID, "ENGINE_002");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MinimumFuel(telemetryData).fuel, 15.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MinimumFuel(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MaxTemperatureTest)
@@ -121,6 +133,9 @@ TEST(TelemetryProcessorTests, MaxTemperatureTest)
 
     EXPECT_EQ(telemetryProcessor.MaxTemperature(telemetryData).deviceID, "ENGINE_002");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MaxTemperature(telemetryData).temperature, 120.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MaxTemperature(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MaxPressureTest)
@@ -134,6 +149,9 @@ TEST(TelemetryProcessorTests, MaxPressureTest)
 
     EXPECT_EQ(telemetryProcessor.MaxPressure(telemetryData).deviceID, "ENGINE_003");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MaxPressure(telemetryData).pressure, 100.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MaxPressure(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MaxRpmTest)
@@ -147,6 +165,9 @@ TEST(TelemetryProcessorTests, MaxRpmTest)
 
     EXPECT_EQ(telemetryProcessor.MaxRpm(telemetryData).deviceID, "ENGINE_002");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MaxRpm(telemetryData).rpm, 4000.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MaxRpm(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryProcessorTests, MaxFuelTest)
@@ -160,6 +181,9 @@ TEST(TelemetryProcessorTests, MaxFuelTest)
 
     EXPECT_EQ(telemetryProcessor.MaxFuel(telemetryData).deviceID, "ENGINE_003");
     EXPECT_DOUBLE_EQ(telemetryProcessor.MaxFuel(telemetryData).fuel, 45.0);
+
+    telemetryData.clear();
+    EXPECT_TRUE(telemetryProcessor.MaxFuel(telemetryData).deviceID.empty());
 }
 
 TEST(TelemetryValidatorTests, ValidateTelemetryTest)
@@ -174,6 +198,20 @@ TEST(TelemetryValidatorTests, ValidateTelemetryTest)
     validData.fuel = 45;
     bool valid = telemetryValidator.ValidateTelemetry(validData);
     EXPECT_TRUE(valid);
+}
+
+TEST(TelemetryValidatorTests, ValidateTelemetryNANTest)
+{
+    TelemetryValidator telemetryValidator;
+
+    TelemetryData invalidData;
+    invalidData.deviceID = "ENGINE01";
+    invalidData.temperature = NAN;
+    invalidData.pressure = 100;
+    invalidData.rpm = 2500;
+    invalidData.fuel = 45;
+    bool invalid = telemetryValidator.ValidateTelemetry(invalidData);
+    EXPECT_FALSE(invalid);
 }
 
 TEST(TelemetryValidatorTests, ValidateTelemetryDeviceIDTest)

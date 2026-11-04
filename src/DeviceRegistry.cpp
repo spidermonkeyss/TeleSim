@@ -18,10 +18,11 @@ void DeviceRegistry::UpdateDevice(TelemetryData data)
 
 std::optional<TelemetryData> DeviceRegistry::GetDevice(const std::string& deviceID)
 {
-	if (HasDevice(deviceID))
-		return devices[deviceID];
-	else
+	auto device = devices.find(deviceID);
+	if (device == devices.end())
 		return std::nullopt;
+	else
+		return device->second;
 }
 
 void DeviceRegistry::ClearDevices()

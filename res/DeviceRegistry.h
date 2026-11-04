@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include <optional>
 
 #include "../res/TelemetryData.h"
 
@@ -10,9 +11,10 @@ public:
 	bool HasDevice(const std::string& deviceID);
 	bool HasDevice(TelemetryData data);
 
+	//The data must go through TelemetryValidator first
 	void UpdateDevice(TelemetryData data);
 	
-	TelemetryData GetDevice(const std::string& deviceID);
+	std::optional<TelemetryData> GetDevice(const std::string& deviceID);
 	
 	void ClearDevices();
 	

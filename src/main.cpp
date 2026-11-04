@@ -122,11 +122,10 @@ int main()
 		DisplayTelemetryDataToConsole(invalidTelemetry, 1);
 
 		//Add or update telemetry to registry
-		//need to switch process telemetry over to using the registry now instead of the vectors
-		for (const auto& data : telemetryData)
+		for (const auto& data : validTelemetry)
 			deviceRegistry.UpdateDevice(data);
 
-		//Process telemetry
+		//Process telemetry that just came in
 		double averageTemperature = telemetryProcessor.AverageTemperature(validTelemetry);
 		double averagePressure = telemetryProcessor.AveragePressure(validTelemetry);
 		double averageRpm = telemetryProcessor.AverageRpm(validTelemetry);

@@ -16,12 +16,12 @@ void DeviceRegistry::UpdateDevice(TelemetryData data)
 	devices[data.deviceID] = data;
 }
 
-TelemetryData DeviceRegistry::GetDevice(const std::string& deviceID)
+std::optional<TelemetryData> DeviceRegistry::GetDevice(const std::string& deviceID)
 {
 	if (HasDevice(deviceID))
 		return devices[deviceID];
 	else
-		return TelemetryData();
+		return std::nullopt;
 }
 
 void DeviceRegistry::ClearDevices()

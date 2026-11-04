@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <string>
 #include <optional>
+#include <vector>
 
 #include "../res/TelemetryData.h"
 
@@ -14,7 +15,8 @@ public:
 	//The data must go through TelemetryValidator first
 	void UpdateDevice(TelemetryData data);
 	
-	std::optional<TelemetryData> GetDevice(const std::string& deviceID);
+	std::optional<TelemetryData> GetDevice(const std::string& deviceID) const;
+	std::vector<TelemetryData> GetAllDevices() const;
 	
 	void ClearDevices();
 	

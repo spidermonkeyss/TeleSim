@@ -140,6 +140,11 @@ int main()
 		TelemetryData maxTempDevice = telemetryProcessor.MaxTemperature(validTelemetry);
 		std::cout << "Max Temperature: " << maxTempDevice.deviceID << " " << maxTempDevice.temperature << "\n";
 
+		//get all devices
+		std::vector<TelemetryData> allDevices = deviceRegistry.GetAllDevices();
+		std::cout << "Display for GetAllDevices call from device registry\n";
+		DisplayTelemetryDataToConsole(allDevices, 1);
+
 		//sleep for 1 second
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 

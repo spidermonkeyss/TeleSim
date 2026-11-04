@@ -16,13 +16,23 @@ void DeviceRegistry::UpdateDevice(TelemetryData data)
 	devices[data.deviceID] = data;
 }
 
-std::optional<TelemetryData> DeviceRegistry::GetDevice(const std::string& deviceID)
+std::optional<TelemetryData> DeviceRegistry::GetDevice(const std::string& deviceID) const
 {
 	auto device = devices.find(deviceID);
 	if (device == devices.end())
 		return std::nullopt;
 	else
 		return device->second;
+}
+
+std::vector<TelemetryData> DeviceRegistry::GetAllDevices() const
+{
+	std::vector<TelemetryData> data;
+
+	for (const auto& device : devices)
+		data.push_back(device.second);
+
+	return data;
 }
 
 void DeviceRegistry::ClearDevices()

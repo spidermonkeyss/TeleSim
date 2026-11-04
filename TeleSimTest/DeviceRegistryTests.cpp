@@ -42,6 +42,17 @@ TEST(DeviceRegistryTests, UpdateDeviceTest)
     //update same device
     data.fuel = 90;
     deviceRegistry.UpdateDevice(data);
+
+    auto device = deviceRegistry.GetDevice(data.deviceID);
+
+    //got a device
+    EXPECT_TRUE(device.has_value());
+
+    //check device count is 1
+    EXPECT_EQ(deviceRegistry.DeviceCount(), 1);
+
+    //check fuel is correct
+    EXPECT_DOUBLE_EQ(device->fuel, 90);
 }
 
 TEST(DeviceRegistryTests, GetDeviceTest)
@@ -72,4 +83,131 @@ TEST(DeviceRegistryTests, GetDeviceTest)
     //doesnt have device
     auto device4 = deviceRegistry.GetDevice("testttttID");
     EXPECT_TRUE(device4 == std::nullopt);
+}
+
+TEST(DeviceRegistryTests, GetAllDevicesTest)
+{
+    DeviceRegistry deviceRegistry;
+
+    TelemetryData data1;
+    data1.deviceID = "testID1";
+    data1.temperature = 100;
+    data1.pressure = 100;
+    data1.rpm = 100;
+    data1.fuel = 100;
+    data1.deviceStatus = NORMAL;
+
+    TelemetryData data2;
+    data2.deviceID = "testID2";
+    data2.temperature = 100;
+    data2.pressure = 100;
+    data2.rpm = 100;
+    data2.fuel = 100;
+    data2.deviceStatus = NORMAL;
+
+    //empty registry
+    std::vector<TelemetryData> data = deviceRegistry.GetAllDevices();
+    EXPECT_EQ(data.size(), 0);
+
+    //one device
+    deviceRegistry.UpdateDevice(data1);
+    data = deviceRegistry.GetAllDevices();
+    EXPECT_EQ(data.size(), 1);
+    EXPECT_TRUE(data.at(0).deviceID == "testID1");
+
+    //two devices
+    deviceRegistry.UpdateDevice(data2);
+    data = deviceRegistry.GetAllDevices();
+    EXPECT_EQ(data.size(), 2);
+}
+
+TEST(DeviceRegistryTests, ClearDevicesTest)
+{
+    DeviceRegistry deviceRegistry;
+
+    TelemetryData data1;
+    data1.deviceID = "testID1";
+    data1.temperature = 100;
+    data1.pressure = 100;
+    data1.rpm = 100;
+    data1.fuel = 100;
+    data1.deviceStatus = NORMAL;
+
+    TelemetryData data2;
+    data2.deviceID = "testID2";
+    data2.temperature = 100;
+    data2.pressure = 100;
+    data2.rpm = 100;
+    data2.fuel = 100;
+    data2.deviceStatus = NORMAL;
+
+    deviceRegistry.UpdateDevice(data1);
+    deviceRegistry.UpdateDevice(data2);
+
+    EXPECT_TRUE(deviceRegistry.DeviceCount() == 2);
+
+    deviceRegistry.ClearDevices();
+
+    EXPECT_TRUE(deviceRegistry.DeviceCount() == 0);
+}
+
+TEST(DeviceRegistryTests, DeleteDeviceTests)
+{
+    DeviceRegistry deviceRegistry;
+
+    TelemetryData data1;
+    data1.deviceID = "testID1";
+    data1.temperature = 100;
+    data1.pressure = 100;
+    data1.rpm = 100;
+    data1.fuel = 100;
+    data1.deviceStatus = NORMAL;
+
+    TelemetryData data2;
+    data2.deviceID = "testID2";
+    data2.temperature = 100;
+    data2.pressure = 100;
+    data2.rpm = 100;
+    data2.fuel = 100;
+    data2.deviceStatus = NORMAL;
+
+    deviceRegistry.UpdateDevice(data1);
+    deviceRegistry.UpdateDevice(data2);
+
+    deviceRegistry.DeleteDevice(data1);
+    EXPECT_TRUE(deviceRegistry.DeviceCount() == 1);
+    EXPECT_FALSE(deviceRegistry.HasDevice(data1));
+    EXPECT_TRUE(deviceRegistry.HasDevice(data2));
+
+    deviceRegistry.DeleteDevice(data2);
+    EXPECT_TRUE(deviceRegistry.DeviceCount() == 0);
+    EXPECT_FALSE(deviceRegistry.HasDevice(data1));
+    EXPECT_FALSE(deviceRegistry.HasDevice(data2));
+}
+
+TEST(DeviceRegistryTests, DeviceCountTests)
+{
+    DeviceRegistry deviceRegistry;
+
+    TelemetryData data1;
+    data1.deviceID = "testID1";
+    data1.temperature = 100;
+    data1.pressure = 100;
+    data1.rpm = 100;
+    data1.fuel = 100;
+    data1.deviceStatus = NORMAL;
+
+    TelemetryData data2;
+    data2.deviceID = "testID2";
+    data2.temperature = 100;
+    data2.pressure = 100;
+    data2.rpm = 100;
+    data2.fuel = 100;
+    data2.deviceStatus = NORMAL;
+
+    deviceRegistry.UpdateDevice(data1);
+    EXPECT_TRUE(deviceRegistry.DeviceCount() == 1);
+    
+    deviceRegistry.UpdateDevice(data2);
+    EXPECT_TRUE(deviceRegistry.DeviceCount() == 2);
 }

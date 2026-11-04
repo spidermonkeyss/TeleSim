@@ -46,7 +46,7 @@ TEST(DeviceRegistryTests, UpdateDeviceTest)
     auto device = deviceRegistry.GetDevice(data.deviceID);
 
     //got a device
-    EXPECT_TRUE(device.has_value());
+    ASSERT_TRUE(device.has_value());
 
     //check device count is 1
     EXPECT_EQ(deviceRegistry.DeviceCount(), 1);

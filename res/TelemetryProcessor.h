@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "../res/TelemetryData.h"
+#include "../res/DeviceRegistry.h"
 
 class TelemetryProcessor
 {

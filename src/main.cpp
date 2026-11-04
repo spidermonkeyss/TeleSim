@@ -6,6 +6,7 @@
 #include "../res/TelemetryValidator.h"
 #include "../res/TelemetryProcessor.h"
 #include "../res/TelemetryData.h"
+#include "../res/DeviceRegistry.h"
 
 void DisplayTelemetryMessagesToConsole(std::vector<TelemetryMessage> messages, int tabs)
 {
@@ -66,7 +67,8 @@ int main()
 {
 	TelemetryValidator telemetryValidator;
 	TelemetryProcessor telemetryProcessor;
-	
+	DeviceRegistry deviceRegistry;
+
 	bool loop = true;
 	while (loop)
 	{
@@ -119,7 +121,10 @@ int main()
 		std::cout << "Invalid telemetry\n";
 		DisplayTelemetryDataToConsole(invalidTelemetry, 1);
 
-
+		//Add or update telemetry to registry
+		//need to switch process telemetry over to using the registry now instead of the vectors
+		for (const auto& data : telemetryData)
+			deviceRegistry.UpdateDevice(data);
 
 		//Process telemetry
 		double averageTemperature = telemetryProcessor.AverageTemperature(validTelemetry);

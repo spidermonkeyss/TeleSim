@@ -228,7 +228,7 @@ TEST(TelemetryValidatorTests, ValidateTelemetryDeviceIDTest)
     EXPECT_FALSE(isInvalid);
 }
 
-TEST(TelemetryValidatorTests, ValidateTelemetryTemperatueTest)
+TEST(TelemetryValidatorTests, ValidateTelemetryTemperatureTest)
 {
     TelemetryValidator telemetryValidator;
 

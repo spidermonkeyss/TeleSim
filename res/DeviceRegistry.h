@@ -9,8 +9,8 @@
 class DeviceRegistry
 {
 public:
-	bool HasDevice(const std::string& deviceID);
-	bool HasDevice(TelemetryData data);
+	bool HasDevice(const std::string& deviceID) const;
+	bool HasDevice(const TelemetryData& data) const;
 
 	//The data must go through TelemetryValidator first
 	void UpdateDevice(TelemetryData data);
@@ -20,7 +20,7 @@ public:
 	
 	void ClearDevices();
 	
-	void DeleteDevice(TelemetryData data);
+	void DeleteDevice(const TelemetryData& data);
 	void DeleteDevice(const std::string& deviceID);
 
 	size_t DeviceCount();

@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum DeviceStatus { NORMAL, WARNING, FAIL };
+enum DeviceStatus { NORMAL, WARNING, FAIL, UNKNOWN };
 
 struct TelemetryData
 {

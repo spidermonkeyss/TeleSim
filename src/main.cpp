@@ -7,6 +7,8 @@
 #include "../res/TelemetryProcessor.h"
 #include "../res/TelemetryData.h"
 #include "../res/DeviceRegistry.h"
+#include "../res/AlertManager.h"
+#include "../res/StatusEvaluator.h"
 
 void DisplayTelemetryMessagesToConsole(std::vector<TelemetryMessage> messages, int tabs)
 {
@@ -22,7 +24,7 @@ void DisplayTelemetryMessagesToConsole(std::vector<TelemetryMessage> messages, i
 		str += strTabs + "Pressure: " + std::to_string(message.pressure) + "\n";
 		str += strTabs + "RPM: " + std::to_string(message.rpm) + "\n";
 		str += strTabs + "fuel: " + std::to_string(message.fuel) + "\n";
-		str += strTabs + "Status: " + message.messageDeviceStatus + "\n\n";
+		//str += strTabs + "Status: " + message.messageDeviceStatus + "\n\n";
 	}
 
 	std::cout << str;
@@ -68,6 +70,8 @@ int main()
 	TelemetryValidator telemetryValidator;
 	TelemetryProcessor telemetryProcessor;
 	DeviceRegistry deviceRegistry;
+	AlertManager alertManager;
+	StatusEvaluator statusEvaluator;
 
 	bool loop = true;
 	while (loop)
@@ -91,16 +95,7 @@ int main()
 			data.pressure = message.pressure;
 			data.rpm = message.rpm;
 			data.fuel = message.fuel;
-			
-			if(message.messageDeviceStatus == "NORMAL")
-				data.deviceStatus = NORMAL;
-			else if (message.messageDeviceStatus == "WARNING")
-				data.deviceStatus = WARNING;
-			else if (message.messageDeviceStatus == "FAIL")
-				data.deviceStatus = FAIL;
-			else
-				data.deviceStatus = FAIL;
-
+			data.deviceStatus = UNKNOWN;
 			telemetryData.push_back(data);
 		}
 
@@ -116,14 +111,23 @@ int main()
 				invalidTelemetry.push_back(data);
 		}
 
-		std::cout << "Valid telemetry\n";
-		DisplayTelemetryDataToConsole(validTelemetry, 1);
-		std::cout << "Invalid telemetry\n";
-		DisplayTelemetryDataToConsole(invalidTelemetry, 1);
+		//Evaluate status
+		for (auto& data : validTelemetry)
+			statusEvaluator.EvaluateReading(data);
+
+		//Handle alerts
+		for (const auto& data : validTelemetry)
+			alertManager.ProcessReading(data);
 
 		//Add or update telemetry to registry
 		for (const auto& data : validTelemetry)
 			deviceRegistry.UpdateDevice(data);
+
+		//Show telemetry for testing
+		std::cout << "Valid telemetry\n";
+		DisplayTelemetryDataToConsole(validTelemetry, 1);
+		std::cout << "Invalid telemetry\n";
+		DisplayTelemetryDataToConsole(invalidTelemetry, 1);
 
 		//Process telemetry that just came in
 		double averageTemperature = telemetryProcessor.AverageTemperature(validTelemetry);

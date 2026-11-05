@@ -10,5 +10,5 @@ struct TelemetryMessage
 	double pressure;
 	double rpm;
 	double fuel;
-	std::string messageDeviceStatus;
+	//std::string messageDeviceStatus;
 };

@@ -1,12 +1,12 @@
 #include "../res/DeviceRegistry.h"
 
-bool DeviceRegistry::HasDevice(const std::string& deviceID)
+bool DeviceRegistry::HasDevice(const std::string& deviceID) const
 {
 	auto device = devices.find(deviceID);
 	return (device != devices.end());
 }
 
-bool DeviceRegistry::HasDevice(TelemetryData data)
+bool DeviceRegistry::HasDevice(const TelemetryData& data) const
 {
 	return HasDevice(data.deviceID);
 }
@@ -40,7 +40,7 @@ void DeviceRegistry::ClearDevices()
 	devices.clear();
 }
 
-void DeviceRegistry::DeleteDevice(TelemetryData data)
+void DeviceRegistry::DeleteDevice(const TelemetryData& data)
 {
 	devices.erase(data.deviceID);
 }

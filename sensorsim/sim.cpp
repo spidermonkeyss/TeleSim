@@ -79,7 +79,7 @@ std::vector<TelemetryMessage> GenerateReadings(int numReadings)
 		tele.pressure = pressureRange(rng);
 		tele.rpm = rpmRange(rng);
 		tele.fuel = fuelRange(rng);
-		tele.messageDeviceStatus = DetermineStatus(tele);
+		//tele.messageDeviceStatus = DetermineStatus(tele);
 		teleMessageVector.push_back(tele);
 	}
 	

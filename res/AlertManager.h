@@ -16,7 +16,7 @@ public:
 
 
 	bool HasAlert(const std::string& deviceID) const;
-	const std::optional<Alert> GetAlert(const std::string& deviceID) const;
+	std::optional<Alert> GetAlert(const std::string& deviceID) const;
 	void ProcessReading(const TelemetryData& reading);
 private:
 	std::unordered_map<std::string, Alert> alerts;

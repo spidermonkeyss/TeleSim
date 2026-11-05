@@ -6,7 +6,7 @@ bool AlertManager::HasAlert(const std::string& deviceID) const
 	return (alert != alerts.end());
 }
 
-const std::optional<AlertManager::Alert> AlertManager::GetAlert(const std::string& deviceID) const
+std::optional<AlertManager::Alert> AlertManager::GetAlert(const std::string& deviceID) const
 {
 	auto alert = alerts.find(deviceID);
 	if (alert == alerts.end())
@@ -17,35 +17,24 @@ const std::optional<AlertManager::Alert> AlertManager::GetAlert(const std::strin
 
 void AlertManager::ProcessReading(const TelemetryData& reading)
 {
-	if (HasAlert(reading.deviceID))
+	auto alert = alerts.find(reading.deviceID);
+	if (alert != alerts.end())
 	{
 		//has a warning or fail alert
-		auto alert = GetAlert(reading.deviceID);
 		if (reading.deviceStatus == NORMAL)
-		{
-			if (alert->deviceStatus == NORMAL)
-				ResolveAlert(reading.deviceID);
-			else if (alert->deviceStatus == WARNING)
-				CreateWarningAlert(reading.deviceID, alert->description);
-			else if (alert-> deviceStatus == FAIL)
-				CreateFailAlert(reading.deviceID, alert->description);
-		}
+			ResolveAlert(reading.deviceID);
 		else if (reading.deviceStatus == WARNING)
 		{
-			if (alert->deviceStatus == NORMAL)
-				ResolveAlert(reading.deviceID);
-			else if (alert->deviceStatus == WARNING)
+			if (alert->second.deviceStatus == WARNING)
 				return;
-			else if (alert->deviceStatus == FAIL)
-				CreateFailAlert(reading.deviceID, alert->description);
+			else if (alert->second.deviceStatus == FAIL)
+				CreateWarningAlert(reading.deviceID, alert->second.description);
 		}
 		else if (reading.deviceStatus == FAIL)
 		{
-			if (alert->deviceStatus == NORMAL)
-				ResolveAlert(reading.deviceID);
-			else if (alert->deviceStatus == WARNING)
-				CreateWarningAlert(reading.deviceID, alert->description);
-			else if (alert->deviceStatus == FAIL)
+			if (alert->second.deviceStatus == WARNING)
+				CreateFailAlert(reading.deviceID, alert->second.description);
+			else if (alert->second.deviceStatus == FAIL)
 				return;
 		}
 	}

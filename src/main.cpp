@@ -77,20 +77,27 @@ void NewProcess()
 	TelemetryMessageQueue tmq;
 	std::thread messageProducerThread([&tmq]()
 		{
-			std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(10);
+			for (int i = 0; i < 10; i++)
+			{
+				std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(10);
 
-			//test invalid
-			telemetryMessages.at(1).fuel = 522;
-			telemetryMessages.at(2).temperature = NAN;
-			for (auto& message : telemetryMessages)
-				tmq.Push(message);
+				//test invalid
+				telemetryMessages.at(1).fuel = 522;
+				telemetryMessages.at(2).temperature = NAN;
+				for (auto& message : telemetryMessages)
+					tmq.Push(message);
+				
+				std::this_thread::sleep_for(std::chrono::seconds(3));
+			}
+
+			tmq.Close();
 		});
 
 	bool loop = true;
 	while (loop)
 	{
 		TelemetryMessage telemetryMessage;
-		tmq.WaitAndPop(telemetryMessage);
+		loop = tmq.WaitAndPop(telemetryMessage);
 
 		//Turn message into data
 		TelemetryData telemetryData;
@@ -122,10 +129,9 @@ void NewProcess()
 		std::system("cls");
 		std::cout << "Display\n";
 		DisplayTelemetryDataToConsole(deviceRegistry.GetAllDevices(), 1);
-		
-		//sleep for 1 second
-		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+
+	messageProducerThread.join();
 }
 
 void OldProcess()

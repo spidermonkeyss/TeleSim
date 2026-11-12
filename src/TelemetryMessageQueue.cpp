@@ -21,6 +21,10 @@ bool TelemetryMessageQueue::WaitAndPop(TelemetryMessage& message)
 	//waits till the queue is not empty
 	std::unique_lock<std::mutex> lock(queueLock);
 	cv.wait(lock, [this] { return !messages.empty() || isClosed; });
+	
+	if (messages.empty())
+		return false;
+
 	message = std::move(messages.front());
 	messages.pop();
 	

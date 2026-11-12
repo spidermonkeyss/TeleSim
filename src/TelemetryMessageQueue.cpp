@@ -2,12 +2,15 @@
 
 bool TelemetryMessageQueue::Push(const TelemetryMessage& message)
 {
-	if (isClosed)
-		return false;
+	{	
+		std::lock_guard<std::mutex> lock(queueLock);
+	
+		if (isClosed)
+			return false;
+	
+		messages.push(message);
+	}
 
-
-	std::lock_guard<std::mutex> lock(queueLock);
-	messages.push(message);
 	cv.notify_one();
 	
 	return true;
@@ -17,7 +20,7 @@ bool TelemetryMessageQueue::WaitAndPop(TelemetryMessage& message)
 {
 	//waits till the queue is not empty
 	std::unique_lock<std::mutex> lock(queueLock);
-	cv.wait(lock, [this] { return messages.empty(); });
+	cv.wait(lock, [this] { return !messages.empty() || isClosed; });
 	message = std::move(messages.front());
 	messages.pop();
 	
@@ -26,6 +29,9 @@ bool TelemetryMessageQueue::WaitAndPop(TelemetryMessage& message)
 
 void TelemetryMessageQueue::Close()
 {
-	isClosed = true;
-	cv.notify_one();
+	{
+		std::lock_guard<std::mutex> lock(queueLock);
+		isClosed = true;
+	}
+	cv.notify_all();
 }

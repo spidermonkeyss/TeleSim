@@ -9,6 +9,7 @@
 #include "../res/DeviceRegistry.h"
 #include "../res/AlertManager.h"
 #include "../res/StatusEvaluator.h"
+#include "../res/TelemetryMessageQueue.h"
 
 void DisplayTelemetryMessagesToConsole(std::vector<TelemetryMessage> messages, int tabs)
 {
@@ -65,7 +66,69 @@ void DisplayTelemetryDataToConsole(const std::vector<TelemetryData>& telemetryDa
 	std::cout << str;
 }
 
-int main()
+void NewProcess()
+{
+	TelemetryValidator telemetryValidator;
+	TelemetryProcessor telemetryProcessor;
+	DeviceRegistry deviceRegistry;
+	AlertManager alertManager;
+	StatusEvaluator statusEvaluator;
+
+	TelemetryMessageQueue tmq;
+	std::thread messageProducerThread([&tmq]()
+		{
+			std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(10);
+
+			//test invalid
+			telemetryMessages.at(1).fuel = 522;
+			telemetryMessages.at(2).temperature = NAN;
+			for (auto& message : telemetryMessages)
+				tmq.Push(message);
+		});
+
+	bool loop = true;
+	while (loop)
+	{
+		TelemetryMessage telemetryMessage;
+		tmq.WaitAndPop(telemetryMessage);
+
+		//Turn message into data
+		TelemetryData telemetryData;
+		telemetryData.deviceID = telemetryMessage.deviceID;
+		telemetryData.temperature = telemetryMessage.temperature;
+		telemetryData.pressure = telemetryMessage.pressure;
+		telemetryData.rpm = telemetryMessage.rpm;
+		telemetryData.fuel = telemetryMessage.fuel;
+		telemetryData.deviceStatus = UNKNOWN;
+
+		//Validate telemetry
+		bool valid = telemetryValidator.ValidateTelemetry(telemetryData);
+		if (!valid)
+		{
+			//do something with logging
+			continue;
+		}
+
+		//Evaluate status
+		statusEvaluator.EvaluateReading(telemetryData);
+
+		//Handle alerts
+		alertManager.ProcessReading(telemetryData);
+
+		//Add or update telemetry to registry
+		deviceRegistry.UpdateDevice(telemetryData);
+
+		//Show telemetry from devices
+		std::system("cls");
+		std::cout << "Display\n";
+		DisplayTelemetryDataToConsole(deviceRegistry.GetAllDevices(), 1);
+		
+		//sleep for 1 second
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+}
+
+void OldProcess()
 {
 	TelemetryValidator telemetryValidator;
 	TelemetryProcessor telemetryProcessor;
@@ -77,13 +140,12 @@ int main()
 	while (loop)
 	{
 		std::system("cls");
-		
+
 		std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(10);
-		
+
 		//test invalid
 		telemetryMessages.at(1).fuel = 522;
 		telemetryMessages.at(2).temperature = NAN;
-
 		
 		//TODO: message handling, turn message into data
 		std::vector<TelemetryData> telemetryData;
@@ -154,6 +216,11 @@ int main()
 
 		loop = false;
 	}
+}
 
+int main()
+{
+	//OldProcess();
+	NewProcess();
 	return 0;
 }

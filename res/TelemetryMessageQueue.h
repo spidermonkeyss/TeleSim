@@ -1,5 +1,8 @@
 #pragma once
 #include <queue>
+#include <mutex>
+#include <condition_variable>
+
 #include "../res/TelemetryMessage.h"
 
 class TelemetryMessageQueue
@@ -17,4 +20,6 @@ public:
 private:
 	std::queue<TelemetryMessage> messages;
 	bool isClosed = false;
+	std::mutex queueLock;
+	std::condition_variable cv;
 };

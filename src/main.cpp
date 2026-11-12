@@ -66,6 +66,40 @@ void DisplayTelemetryDataToConsole(const std::vector<TelemetryData>& telemetryDa
 	std::cout << str;
 }
 
+void DisplayAlerts(const DeviceRegistry& deviceRegistry, const AlertManager& alertManager, int tabs)
+{
+	std::string str = "";
+	std::string strTabs = "";
+	for (int i = 0; i < tabs; i++)
+		strTabs += "\t";
+
+	for (const TelemetryData& device : deviceRegistry.GetAllDevices())
+	{
+		auto alert = alertManager.GetAlert(device.deviceID);
+		if (alert.has_value())
+		{
+			str += strTabs + alert->deviceID + "\n";
+			str += strTabs + alert->description + "\n";
+			switch (alert->deviceStatus)
+			{
+			case DeviceStatus::NORMAL:
+				str += strTabs + "Status: NORMAL\n\n";
+				break;
+			case DeviceStatus::WARNING:
+				str += strTabs + "Status: WARNING\n\n";
+				break;
+			case DeviceStatus::FAIL:
+				str += strTabs + "Status: FAIL\n\n";
+				break;
+			default:
+				str += strTabs + "Status: UNKNOWN\n\n";
+				break;
+			}
+		}
+	}
+	std::cout << str;
+}
+
 void NewProcess()
 {
 	TelemetryValidator telemetryValidator;
@@ -79,7 +113,11 @@ void NewProcess()
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				std::vector<TelemetryMessage> telemetryMessages = GenerateReadings(10);
+				std::vector<TelemetryMessage> telemetryMessages;
+				if (i % 2 == 0)
+					telemetryMessages = GenerateReadings(10);
+				else
+					telemetryMessages = GenerateReadings(5);
 
 				//test invalid
 				telemetryMessages.at(1).fuel = 522;
@@ -93,12 +131,9 @@ void NewProcess()
 			tmq.Close();
 		});
 
-	bool loop = true;
-	while (loop)
+	TelemetryMessage telemetryMessage;
+	while (tmq.WaitAndPop(telemetryMessage))
 	{
-		TelemetryMessage telemetryMessage;
-		loop = tmq.WaitAndPop(telemetryMessage);
-
 		//Turn message into data
 		TelemetryData telemetryData;
 		telemetryData.deviceID = telemetryMessage.deviceID;
@@ -125,10 +160,32 @@ void NewProcess()
 		//Add or update telemetry to registry
 		deviceRegistry.UpdateDevice(telemetryData);
 
+
 		//Show telemetry from devices
 		std::system("cls");
 		std::cout << "Display\n";
-		DisplayTelemetryDataToConsole(deviceRegistry.GetAllDevices(), 1);
+		std::vector<TelemetryData> devices = deviceRegistry.GetAllDevices();
+		DisplayTelemetryDataToConsole(devices, 1);
+
+		//Alert display
+		std::cout << "Alerts\n";
+		DisplayAlerts(deviceRegistry, alertManager, 1);
+
+		//Processor stuff
+		double averageTemperature = telemetryProcessor.AverageTemperature(devices);
+		double averagePressure = telemetryProcessor.AveragePressure(devices);
+		double averageRpm = telemetryProcessor.AverageRpm(devices);
+		double averageFuel = telemetryProcessor.AverageFuel(devices);
+		std::cout << "Average Temperature: " << averageTemperature << "\n";
+		std::cout << "Average Pressure: " << averagePressure << "\n";
+		std::cout << "Average RPM: " << averageRpm << "\n";
+		std::cout << "Average Fuel: " << averageFuel << "\n";
+
+		TelemetryData minTempDevice = telemetryProcessor.MinimumTemperature(devices);
+		std::cout << "Minimun Temperature: " << minTempDevice.deviceID << " " << minTempDevice.temperature << "\n";
+		TelemetryData maxTempDevice = telemetryProcessor.MaxTemperature(devices);
+		std::cout << "Max Temperature: " << maxTempDevice.deviceID << " " << maxTempDevice.temperature << "\n";
+
 	}
 
 	messageProducerThread.join();
